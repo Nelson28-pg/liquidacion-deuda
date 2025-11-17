@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Cálculo de Liquidación de Deuda</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Cálculo de Liquidación de Deuda</h1>
+        <p>Esta interfaz ya no requiere que subas un archivo JSON, ya que el sistema utiliza el archivo interno del proyecto.</p>
+        <form method="post" class="mt-4">
+            <div class="form-group">
+                <label for="fecha_actualizacion">Fecha de Actualización</label>
+                <input type="date" class="form-control" id="fecha_actualizacion" name="fecha_actualizacion" value="{{ fecha if fecha else '' }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Calcular</button>
+        </form>
+
+        {% if tabla %}
+            <h2 class="mt-5">Resultados</h2>
+            <div class="table-responsive">
+                {{ tabla|safe }}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
