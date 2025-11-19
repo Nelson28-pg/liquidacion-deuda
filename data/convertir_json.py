@@ -55,6 +55,7 @@ ruta_json_absoluta = os.path.join(script_dir, 'base_ucec.json')
 
 
 columnas_deseadas = ['EEM', 'EEM_ABREV', 'OBLIGADO', 'RUC', 'RESOL_SUBINTENDENCIA', 'FEC_NOTI_RSI', 'RESOL_INTENDENCIA', 'FEC_NOTI_RI', 
-                     'FECHA EN LA CUAL QUEDA CONSENTIDA LA MULTA', 'SALDO DEUDOR', 'ESTADO']
+                     'FECHA EN LA CUAL QUEDA CONSENTIDA LA MULTA', 'ULTIMA FEC_PAGO', 'SALDO INICIAL', 'SALDO DEUDOR', 'ESTADO',
+                     'FECHA RECEPCION MEMORANDUM', 'EXPEDIENTE COACTIVO', 'CLASIFICACION COACTIVA', 'DUPLICADO']
 
 csv_columnas_a_json_pandas(ruta_csv=ruta_csv_absoluta, columnas_a_incluir=columnas_deseadas, ruta_json_salida=ruta_json_absoluta)

@@ -71,6 +71,20 @@ def init_session_state():
     if 'autocomplete_data' not in st.session_state:
         st.session_state.autocomplete_data = None
 
+    
+    
+    """Inicializa estados de Tab 3 (Modificar Expediente)."""
+    if 'tab3_search_performed' not in st.session_state:
+        st.session_state.tab3_search_performed = False
+    if 'tab3_expediente_encontrado' not in st.session_state:
+        st.session_state.tab3_expediente_encontrado = None
+    if 'tab3_success_message' not in st.session_state:
+        st.session_state.tab3_success_message = None
+    if 'tab3_error_message' not in st.session_state:
+        st.session_state.tab3_error_message = None
+    if 'tab3_reset_key' not in st.session_state:
+        st.session_state.tab3_reset_key = str(uuid.uuid4())
+
 
 def limpiar_busqueda():
     """Limpia la búsqueda de expedientes en Tab 1."""
@@ -128,6 +142,24 @@ def limpiar_form_nuevo_dato():
     # Limpiar mensajes (NO son widgets)
     st.session_state.form_tab2_success_message = None
     st.session_state.form_tab2_error_message = None
+
+def limpiar_busqueda_tab3():
+    """Limpia los estados de búsqueda de Tab 3."""
+    keys_to_delete = [
+        'eem_input_search_tab3',
+        'select_nuevo_estado',
+        'input_nuevo_saldo'
+    ]
+    
+    for key in keys_to_delete:
+        if key in st.session_state:
+            del st.session_state[key]
+    
+    st.session_state.tab3_search_performed = False
+    st.session_state.tab3_expediente_encontrado = None
+    st.session_state.tab3_success_message = None
+    st.session_state.tab3_error_message = None
+    st.session_state.tab3_reset_key = str(uuid.uuid4())
 
 
 def limpiar_todo():

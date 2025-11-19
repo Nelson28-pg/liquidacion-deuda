@@ -1,12 +1,10 @@
 import streamlit as st
 import base64
 import os
-import streamlit.components.v1 as components
-from datetime import datetime
-import time
 
-# --- Authentication ---
-
+# ============================================
+# USUARIOS DEL SISTEMA
+# ============================================
 USERS = {
     "analista01": "analista2020*",
     "analista02": "analista2021*",
@@ -20,12 +18,13 @@ def check_login(username, password):
     """Verifica si el usuario y la contraseña son válidos."""
     return USERS.get(username) == password
 
-# --- UI Rendering ---
-
+# ============================================
+# PÁGINA DE LOGIN
+# ============================================
 def set_background(image_path):
     """Convierte una imagen local a base64 y la usa como fondo del sitio."""
     if not os.path.exists(image_path):
-        # Usar fondo gradiente por defecto si no existe la imagen
+        # Usar fondo gradiente por defecto
         css = """
         <style>
             .stApp > header, #MainMenu, footer {
@@ -47,11 +46,9 @@ def set_background(image_path):
 
     css = f"""
     <style>
-        /* Ocultar elementos de Streamlit en la página de login */
         .stApp > header, #MainMenu, footer {{
             visibility: hidden;
         }}
-        /* Aplicar fondo */
         .stApp {{
             background: url("data:image/png;base64,{encoded}");
             background-size: cover;
@@ -63,7 +60,7 @@ def set_background(image_path):
     st.markdown(css, unsafe_allow_html=True)
 
 def render_login_page():
-    """Muestra el login centrado y con fondo elegante."""
+    """Muestra el login centrado con fondo elegante."""
     if st.session_state.get('logged_in', False):
         return True
 
@@ -97,7 +94,7 @@ def render_login_page():
             width: 100%;
         }
         
-        /* Formulario de login centrado */
+        /* Formulario de login */
         div[data-testid="stForm"] {
             background-color: rgba(0, 0, 0, 0.65); 
             padding: 2.5rem 3rem;
@@ -112,19 +109,31 @@ def render_login_page():
             backdrop-filter: blur(5px); 
             animation: fade-in 0.9s ease-out;
             position: relative;
-            margin-top: -5vh; /* Ajusta posición vertical (hacia arriba) */
+            margin-top: -5vh;
         }
         
-        /* Inputs de texto */
+        /* Inputs de texto - TEXTO NEGRO */
         .stTextInput > div > div > input {
-            background-color: rgba(255,255,255,0.15); 
-            color: white;
+            background-color: rgba(255,255,255,0.9) !important; 
+            color: #000000 !important; /* ✅ TEXTO NEGRO */
             border-radius: 6px; 
             padding: 10px;
+            border: 1px solid rgba(3, 169, 244, 0.3);
         }
         
         .stTextInput > div > div > input::placeholder {
-            color: rgba(255,255,255,0.5);
+            color: #666666 !important; /* Placeholder gris oscuro */
+        }
+        
+        .stTextInput > div > div > input:focus {
+            border: 2px solid #03a9f4 !important;
+            background-color: rgba(255,255,255,1) !important;
+        }
+        
+        /* Labels de inputs */
+        .stTextInput > label {
+            color: #ffffff !important;
+            font-weight: 500;
         }
         
         /* Botón de login */
@@ -137,11 +146,14 @@ def render_login_page():
             font-size: 16px; 
             font-weight: 600;
             margin-top: 1rem;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            border: none;
         }
         
         .stButton > button:hover {
             background-color: #0288d1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(3, 169, 244, 0.4);
         }
         
         /* Título personalizado */
@@ -151,6 +163,13 @@ def render_login_page():
             font-size: 28px;
             font-weight: 700; 
             margin-bottom: 2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* Mensajes de error */
+        .stAlert {
+            animation: shake 0.5s ease-out;
+            border-radius: 8px;
         }
         
         /* Animaciones */
@@ -159,11 +178,13 @@ def render_login_page():
             to { opacity: 1; transform: scale(1); }
         }
         
-        .stAlert {
-            animation: fade-in 0.3s ease-out;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
         }
         
-        /* Ocultar scrollbar en todos los navegadores */
+        /* Ocultar scrollbar */
         ::-webkit-scrollbar {
             display: none;
         }
@@ -176,236 +197,61 @@ def render_login_page():
     """
     st.markdown(login_css, unsafe_allow_html=True)
 
-    # Contenedor para centrar el formulario
+    # Contenedor para centrar
     _, col_form, _ = st.columns([1, 1.5, 1])
 
     with col_form:
         with st.form("login_form"):
-            st.markdown("<div class='custom-title'>Iniciar Sesión</div>", unsafe_allow_html=True)
-            username = st.text_input("Usuario", key="login_username", placeholder="analista01")
-            password = st.text_input("Contraseña", type="password", key="login_password", placeholder="********")
-            submitted = st.form_submit_button("Ingresar")
+            st.markdown("<div class='custom-title'>🔐 Iniciar Sesión</div>", unsafe_allow_html=True)
+            
+            username = st.text_input(
+                "Usuario", 
+                key="login_username", 
+                placeholder="analista01",
+                help="Ingrese su nombre de usuario"
+            )
+            
+            password = st.text_input(
+                "Contraseña", 
+                type="password", 
+                key="login_password", 
+                placeholder="********",
+                help="Ingrese su contraseña"
+            )
+            
+            submitted = st.form_submit_button("🚀 Ingresar")
 
             if submitted:
                 if check_login(username, password):
                     st.session_state.logged_in = True
                     st.session_state.username = username
-                    st.session_state.show_matrix_loading = True
-                    st.session_state.loading_start_time = time.time()
+                    from datetime import datetime
+                    st.session_state.last_activity = datetime.now()
+                    st.success("✅ Acceso concedido")
                     st.rerun()
                 else:
-                    st.error("Usuario o contraseña incorrectos")
+                    st.error("❌ Usuario o contraseña incorrectos")
+    
+    # Footer del login
+    st.markdown("""
+        <div style='position: fixed; bottom: 20px; width: 100%; text-align: center;'>
+            <p style='color: rgba(255,255,255,0.6); font-size: 12px;'>
+                Sistema de Liquidaciones v2.5 | © 2025
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
     
     return False
 
-def render_loading_page():
-    """
-    Muestra una pantalla de carga que ocupa toda la pantalla por 6 segundos.
-    """
-    current_hour = datetime.now().hour
-    greeting = "Buenas noches"
-    if 5 <= current_hour < 12:
-        greeting = "Buenos días"
-    elif 12 <= current_hour < 19:
-        greeting = "Buenas tardes"
-
-    username = st.session_state.get('username', 'Usuario')
-
-    # Ocultar completamente todos los elementos de Streamlit
-    st.markdown("""
-        <style>
-            .stApp > header, #MainMenu, footer, [data-testid="stToolbar"] {
-                visibility: hidden !important;
-                display: none !important;
-            }
-            iframe {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                border: none !important;
-                z-index: 999999 !important;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
-    loading_html = f'''
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Cargando...</title>
-        <style>
-            * {{
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }}
-            
-            body, html {{ 
-                width: 100vw;
-                height: 100vh;
-                overflow: hidden; 
-                background-color: #000; /* 🎨 Color de fondo principal */
-                font-family: 'Courier New', Courier, monospace; /* 🎨 Fuente del texto */
-            }}
-            
-            #loading-container {{
-                position: fixed; 
-                top: 0; 
-                left: 0; 
-                width: 100vw; 
-                height: 100vh;
-                display: flex; 
-                flex-direction: column;
-                justify-content: center; 
-                align-items: center;
-                z-index: 9999;
-            }}
-            
-            #matrix-canvas {{
-                position: absolute; 
-                top: 0; 
-                left: 0; 
-                width: 100%; 
-                height: 100%;
-                z-index: 1; 
-                opacity: 0.25; /* 🎨 Transparencia del efecto Matrix (0.1 = muy transparente, 1.0 = opaco) */
-            }}
-            
-            .welcome-text, .subtitle-text {{
-                position: relative; 
-                z-index: 2;
-                text-align: center;
-                animation: fade-in 1.2s ease-out; /* 🎨 Duración de la animación de aparición */
-            }}
-            
-            .welcome-text {{ 
-                color: #fff; /* 🎨 Color del título principal (blanco) */
-                font-size: 3.5rem; /* 🎨 Tamaño del título */
-                font-weight: bold; /* ✅ Título en negrita */
-                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 
-                             0 0 30px rgba(255, 255, 255, 0.6); /* 🎨 Resplandor del título */
-                margin-bottom: 20px; /* 🎨 Espacio entre título y subtítulo */
-                letter-spacing: 2px; /* 🎨 Espaciado entre letras */
-            }}
-            
-            .subtitle-text {{ 
-                color: #0f0; /* 🎨 Color del subtítulo (verde Matrix) */
-                font-size: 1.8rem; /* 🎨 Tamaño del subtítulo */
-                font-weight: 500; /* 🎨 Grosor del subtítulo */
-                text-shadow: 0 0 10px #0f0, 0 0 20px #0f0; /* 🎨 Resplandor del subtítulo */
-            }}
-            
-            @keyframes fade-in {{
-                from {{ opacity: 0; transform: translateY(-30px); }}
-                to {{ opacity: 1; transform: translateY(0); }}
-            }}
-        </style>
-    </head>
-    <body>
-        <div id="loading-container">
-            <canvas id="matrix-canvas"></canvas>
-            <div class="welcome-text">Bienvenido, {username.capitalize()}</div>
-            <div class="subtitle-text">{greeting}</div>
-        </div>
-        <script>
-            (function() {{
-                try {{
-                    // ========== CONFIGURACIÓN DEL EFECTO MATRIX ==========
-                    const canvas = document.getElementById('matrix-canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Ajustar canvas al tamaño de la ventana
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                    
-                    // 🎨 Caracteres que caerán (puedes agregar o quitar caracteres)
-                    const alphabet = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
-                    
-                    // 🎨 Tamaño de la fuente (afecta la densidad del efecto)
-                    const fontSize = 16;
-                    
-                    const columns = Math.floor(canvas.width / fontSize);
-                    const rainDrops = [];
-                    
-                    // Inicializar gotas de lluvia en posiciones aleatorias
-                    for (let x = 0; x < columns; x++) {{ 
-                        rainDrops[x] = Math.floor(Math.random() * canvas.height / fontSize); 
-                    }}
-                    
-                    // ========== FUNCIÓN DE DIBUJO DEL EFECTO MATRIX ==========
-                    function draw() {{
-                        // 🎨 Transparencia del rastro (0.05 = rastro más largo, 0.1 = rastro más corto)
-                        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        
-                        // 🎨 Color de los caracteres Matrix (verde)
-                        ctx.fillStyle = '#0F0';
-                        ctx.font = fontSize + 'px monospace';
-                        
-                        // Dibujar cada columna de caracteres
-                        for (let i = 0; i < rainDrops.length; i++) {{
-                            const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                            ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-                            
-                            // 🎨 Probabilidad de reinicio de columna (0.975 = más frecuente, 0.99 = menos frecuente)
-                            if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {{
-                                rainDrops[i] = 0;
-                            }}
-                            rainDrops[i]++;
-                        }}
-                    }}
-                    
-                    // ========== INICIAR ANIMACIÓN ==========
-                    // 🎨 Velocidad del efecto (33ms = ~30fps, 16ms = ~60fps)
-                    const animationInterval = setInterval(draw, 33);
-                    
-                    // ========== DURACIÓN DE LA PANTALLA DE CARGA ==========
-                    // 🎨 Tiempo en milisegundos (3000 = 3 segundos)
-                    setTimeout(function() {{
-                        clearInterval(animationInterval);
-                        console.log('Pantalla de carga completada');
-                    }}, 3000);
-                    
-                }} catch (e) {{
-                    console.error('Error en pantalla de carga:', e);
-                }}
-            }})();
-        </script>
-    </body>
-    </html>
-    '''
-    
-    # Renderizar HTML con altura completa
-    components.html(loading_html, height=900, scrolling=False)
-    
-    # Control de tiempo usando session_state
-    if 'loading_start_time' not in st.session_state:
-        st.session_state.loading_start_time = time.time()
-    
-    elapsed_time = time.time() - st.session_state.loading_start_time
-    
-    # Después de 6 segundos, desactivar el loading
-    if elapsed_time >= 6:
-        st.session_state.show_matrix_loading = False
-        if 'loading_start_time' in st.session_state:
-            del st.session_state.loading_start_time
-        st.rerun()
-    else:
-        # Verificar cada segundo
-        time.sleep(1)
-        st.rerun()
-
+# ============================================
+# LOGOUT
+# ============================================
 def logout():
     """Cierra la sesión y limpia todos los datos."""
-    # Lista de keys críticas que deben reinicializarse
     critical_keys = {
         'logged_in': False,
         'username': "",
-        'user_role': ""
+        'dark_mode': False
     }
     
     # Eliminar todas las keys
@@ -417,5 +263,5 @@ def logout():
     for key, value in critical_keys.items():
         st.session_state[key] = value
     
+    st.success("👋 Sesión cerrada exitosamente")
     st.rerun()
-    

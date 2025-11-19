@@ -102,8 +102,8 @@ def render_tab2(df_principal, ruta_json):
         col5, col6 = st.columns(2)
         
         with col5:
-            saldo_deudor = st.number_input(
-                "Saldo Deudor (S/)*", 
+            saldo_inicial = st.number_input(
+                "Saldo Inicial (S/)*", 
                 min_value=0.0,
                 step=0.01,
                 format="%.2f",
@@ -210,8 +210,8 @@ def render_tab2(df_principal, ruta_json):
                 st.session_state.form_tab2_error_message = "❌ El campo 'EEM Abreviado' es obligatorio"
                 st.rerun()
             
-            elif saldo_deudor <= 0:
-                st.session_state.form_tab2_error_message = "❌ El saldo deudor debe ser mayor a 0"
+            elif saldo_inicial <= 0:
+                st.session_state.form_tab2_error_message = "❌ El saldo inicial debe ser mayor a 0"
                 st.rerun()
             
             elif estado == "Seleccione un estado":
@@ -234,7 +234,7 @@ def render_tab2(df_principal, ruta_json):
                         "EEM_ABREV": eem_abrev_procesado,
                         "OBLIGADO": obligado.strip().upper(),
                         "RUC": ruc.strip(),
-                        "SALDO DEUDOR": float(saldo_deudor),
+                        "SALDO INICIAL": float(saldo_inicial),
                         "ESTADO": estado,
                         "RESOL_SUBINTENDENCIA": resol_subintendencia.strip().upper() if resol_subintendencia else "",
                         "FEC_NOTI_RSI": fecha_noti_rsi.strftime("%d/%m/%Y") if fecha_noti_rsi else "",
@@ -277,7 +277,7 @@ def render_tab2(df_principal, ruta_json):
             df_display = df_principal.tail(10)
         
         # Seleccionar columnas para mostrar
-        columns_to_show = ['EEM', 'OBLIGADO', 'RUC', 'ESTADO', 'SALDO DEUDOR']
+        columns_to_show = ['EEM', 'OBLIGADO', 'RUC', 'ESTADO', 'SALDO INICIAL']
         
         # Agregar FECHA_REGISTRO y USUARIO_REGISTRO si existen
         if 'FECHA_REGISTRO' in df_display.columns:
